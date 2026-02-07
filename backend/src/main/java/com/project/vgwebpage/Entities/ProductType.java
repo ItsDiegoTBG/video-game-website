@@ -1,6 +1,6 @@
 package com.project.vgwebpage.Entities;
 
-public enum ProductEnum {
+public enum ProductType {
     GAME,
     CONSOLE,
     ACCESSORIES

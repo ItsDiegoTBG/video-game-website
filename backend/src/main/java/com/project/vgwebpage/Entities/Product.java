@@ -10,25 +10,26 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="Product")
+@Table(name="product")
 public class Product {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
-    @Column(unique = true, length = 100, nullable = false)
+    @Column(name = "name",unique = true, length = 100, nullable = false)
     private String name;
-    @Column(nullable = true)
-    private String descripString;
-    @Column(nullable = false)
+    @Column(name = "description",nullable = true,length = 200)
+    private String description;
+    @Column(name = "price", nullable = false)
+    private Double price;
+    @Column(name = "amount",nullable = false)
     private Integer amount;
-    @Column(nullable = true)
+    @Column(name = "rating",nullable = true)
     private Integer rating;
-    @Column(nullable=true)
+    @Column(name = "photo_url",nullable=true)
     private String PhotoUrl; 
-
+    @Column(name= "product_type",nullable = false)
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private ProductEnum Type;
+    private ProductType Type;
     
     //PRODUCT IMAGE AND USER IMAGE AAAAAAAAAAAAAA
 
@@ -45,11 +46,11 @@ public class Product {
     public void setName(String name) {
         this.name = name;
     }
-    public String getDescripString() {
-        return descripString;
+    public String getDescription() {
+        return description;
     }
-    public void setDescripString(String descripString) {
-        this.descripString = descripString;
+    public void setDescription(String descripString) {
+        this.description = descripString;
     }
     public Integer getAmount() {
         return amount;
@@ -69,15 +70,15 @@ public class Product {
     public void setPhotoUrl(String photoUrl) {
         PhotoUrl = photoUrl;
     }
-    public ProductEnum getType() {
+    public ProductType getType() {
         return Type;
     }
-    public void setType(ProductEnum type) {
+    public void setType(ProductType type) {
         Type = type;
     }
     @Override
     public String toString() {
-        return "Product [id=" + id + ", name=" + name + ", descripString=" + descripString + ", amount=" + amount
+        return "Product [id=" + id + ", name=" + name + ", descripString=" + description + ", amount=" + amount
                 + ", rating=" + rating + ", Type=" + Type + "]";
     }
 }

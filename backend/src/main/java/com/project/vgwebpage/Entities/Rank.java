@@ -1,6 +1,6 @@
 package com.project.vgwebpage.Entities;
 
-public enum UserEnum {
+public enum Rank {
     USER,
     ADMIN,
     SUPERADMIN

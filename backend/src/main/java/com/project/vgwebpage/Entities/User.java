@@ -10,23 +10,23 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "User")
+@Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
-    @Column(unique=true, nullable = false)
+    @Column(name="name",unique=true, nullable = false)
     private String name;
-    @Column(unique=true, nullable = false)
+    @Column(name = "email",unique=true, nullable = false)
     private String email;
     // add password here? wait isnt that a BAD Idea. We WILL need to hash this later
-    @Column(unique=true, nullable =false)
+    @Column(name = "passowrd",unique=true, nullable =false)
     private String password;
-    @Column(nullable=true)
+    @Column(name = "photo_url",nullable=true)
     private String PhotoUrl; 
+    @Column(name= "user_rank",nullable = false)
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UserEnum rank;
+    private Rank rank;
 
     public Integer getId() {
         return id;
@@ -53,10 +53,10 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-    public UserEnum getRank() {
+    public Rank getRank() {
         return rank;
     }
-    public void setRank(UserEnum rank) {
+    public void setRank(Rank rank) {
         this.rank = rank;
     }
     public String getPhotoUrl() {
