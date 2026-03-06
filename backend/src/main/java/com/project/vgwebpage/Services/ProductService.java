@@ -1,13 +1,11 @@
 package com.project.vgwebpage.Services;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +19,9 @@ import com.project.vgwebpage.Repositories.ProductRepository;
 public class ProductService {
     @Autowired
     private ProductRepository productRepository;
+
+    private final Path uploadPath = Paths.get("uploads").toAbsolutePath().normalize();
+
 
     public Product createProduct(Product product) {
         return productRepository.save(product);
@@ -38,32 +39,38 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    public String uploadPhoto(Integer id, MultipartFile File) {
+    public String uploadPhoto(Integer id, MultipartFile file) {
+
         Product product = getProductById(id);
-        String photoUrl = photoFunction.apply(id, File);
-        product.setPhotoUrl(photoUrl);
-        productRepository.save(product);
-        return photoUrl;
+
+        try {
+            String fileExtension = getFileExtension(file.getOriginalFilename());
+            String fileName = id + fileExtension;
+
+            Path targetLocation = uploadPath.resolve(fileName);
+            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+            String photoUrl = ServletUriComponentsBuilder
+                    .fromCurrentContextPath()
+                    .path("/api/products/image/")
+                    .path(fileName)
+                    .toUriString();
+
+            product.setPhotoUrl(photoUrl);
+            productRepository.save(product);
+
+            return photoUrl;
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to store image", e);
+        }
     }
 
-    private final Function<String, String> fileExtension = filename -> Optional.of(filename)
-            .filter(name -> name.contains(".")).map(name -> "." + name.substring(filename.lastIndexOf(".") + 1))
-            .orElse(".png");
-
-    private final BiFunction<Integer, MultipartFile, String> photoFunction = (id, image) -> {
-        String filename = id + fileExtension.apply(image.getOriginalFilename());
-        try {
-            Path fileStorageLocation = Paths.get("").toAbsolutePath().normalize();
-            if (!Files.exists(fileStorageLocation)) {
-                Files.createDirectories(fileStorageLocation);
-            }
-            Files.copy(image.getInputStream(),
-                    fileStorageLocation.resolve(id + fileExtension.apply(image.getOriginalFilename())),
-                    StandardCopyOption.REPLACE_EXISTING);
-            return ServletUriComponentsBuilder.fromCurrentContextPath().path("/user/image/" + filename).toUriString();
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to save Image");
+    private String getFileExtension(String filename) {
+        if (filename == null || !filename.contains(".")) {
+            return ".png";
         }
+        return filename.substring(filename.lastIndexOf("."));
     };
 
 }

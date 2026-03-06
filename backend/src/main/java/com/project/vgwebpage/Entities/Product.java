@@ -31,9 +31,6 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private ProductType Type;
     
-    //PRODUCT IMAGE AND USER IMAGE AAAAAAAAAAAAAA
-
-
     public Integer getId() {
         return id;
     }
